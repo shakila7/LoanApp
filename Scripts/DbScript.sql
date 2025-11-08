@@ -1,0 +1,17 @@
+﻿CREATE DATABASE LoanAppDb;
+GO
+USE LoanAppDb;
+GO
+CREATE TABLE LoanApplications (
+	Id INT IDENTITY(1,1) PRIMARY KEY,
+	CustomerName VARCHAR(200) NOT NULL,
+	NicPassport VARCHAR(50) NOT NULL,
+	LoanType VARCHAR(50) NOT NULL,
+	InterestRate DECIMAL(5,2) NOT NULL,
+	LoanAmount DECIMAL(18,2) NOT NULL,
+	DurationMonths INT NOT NULL,
+	Status VARCHAR(20) NOT NULL,
+	CreatedAt DATETIME NOT NULL,
+	UpdatedAt DATETIME NOT NULL
+);
+GO
