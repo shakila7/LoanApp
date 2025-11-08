@@ -2,7 +2,7 @@
 GO
 USE LoanAppDb;
 GO
-CREATE TABLE LoanApplications (
+CREATE TABLE LoanApplication (
 	Id INT IDENTITY(1,1) PRIMARY KEY,
 	CustomerName VARCHAR(200) NOT NULL,
 	NicPassport VARCHAR(50) NOT NULL,

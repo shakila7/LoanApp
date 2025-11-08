@@ -1,6 +1,5 @@
 ﻿using LoanApp.Models;
 using Microsoft.Data.SqlClient;
-using System.Data.SqlClient;
 
 namespace LoanApp.Data
 {
@@ -14,13 +13,13 @@ namespace LoanApp.Data
 
         private SqlConnection GetConn() => new SqlConnection(_connectionString);
 
-        public IEnumerable<LoanApplication> GetAll() 
+        public async Task<IEnumerable<LoanApplication>> GetAll() 
         {
             var loanApplicationList = new List<LoanApplication>();
             using var conn = GetConn();
             using var cmd = new SqlCommand("SELECT * FROM LoanApplication ORDER BY CreatedAt DESC", conn);
-            conn.Open();
-            using var reader = cmd.ExecuteReader();
+            await conn.OpenAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
             while (reader.Read()) 
             {
                 loanApplicationList.Add(Map(reader));
@@ -28,17 +27,17 @@ namespace LoanApp.Data
             return loanApplicationList;
         }
 
-        public LoanApplication GetById(int id) 
+        public async Task<LoanApplication> GetById(int id) 
         {
             using var conn = GetConn();
             using var cmd = new SqlCommand("SELECT * FROM LoanApplication WHERE Id = @Id", conn);
             cmd.Parameters.AddWithValue("@Id", id);
-            conn.Open();
-            using var reader = cmd.ExecuteReader();
+            await conn.OpenAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
             if (reader.Read()) return Map(reader);
             return null;
         }
-        public int Create(LoanApplication model)
+        public async Task<int> Create(LoanApplication model)
         {
             using var conn = GetConn();
             using var cmd = new SqlCommand(@"
@@ -55,33 +54,35 @@ namespace LoanApp.Data
             cmd.Parameters.AddWithValue("@Status", model.Status);
             cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
             cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
-            conn.Open();
-            var res = cmd.ExecuteScalar();
+            await conn.OpenAsync();
+            var res = await cmd.ExecuteScalarAsync();
             return Convert.ToInt32(res);
         }
-        public void UpdateStatus(int id, string status)
+        public async Task UpdateStatus(int id, string status)
         {
             using var conn = GetConn();
             using var cmd = new SqlCommand("UPDATE LoanApplication SET Status=@Status, UpdatedAt=@UpdatedAt WHERE Id=@Id", conn);
             cmd.Parameters.AddWithValue("@Status", status);
             cmd.Parameters.AddWithValue("@Id", id);
             cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now);
-            conn.Open();
-            cmd.ExecuteNonQuery();
+            await conn.OpenAsync();
+            await cmd.ExecuteNonQueryAsync();
         }
         private LoanApplication Map(SqlDataReader rdr)
         {
             return new LoanApplication
             {
-                Id = (int)rdr["Id"],
-                CustomerName = rdr["CustomerName"].ToString(),
-                NicPassport = rdr["NicPassport"].ToString(),
-                LoanType = rdr["LoanType"].ToString(),
-                InterestRate = (decimal)rdr["InterestRate"],
-                LoanAmount = (decimal)rdr["LoanAmount"],
-                DurationMonths = (int)rdr["DurationMonths"],
-                Status = rdr["Status"].ToString(),
-                CreatedAt = (DateTime)rdr["CreatedAt"]
+                Id = Convert.ToInt32(rdr["Id"]),
+                CustomerName = Convert.ToString(rdr["CustomerName"]),
+                NicPassport = Convert.ToString(rdr["NicPassport"]),
+                LoanType = Convert.ToString(rdr["LoanType"]),
+                InterestRate = Convert.ToDecimal(rdr["InterestRate"]),
+                LoanAmount = Convert.ToDecimal(rdr["LoanAmount"]),
+                DurationMonths = Convert.ToInt32(rdr["DurationMonths"]),
+                Status = Convert.ToString(rdr["Status"]),
+                IsDeleted = Convert.ToBoolean(rdr["IsDeleted"]),
+                CreatedAt = Convert.ToDateTime(rdr["CreatedAt"]),
+                UpdatedAt = Convert.ToDateTime(rdr["UpdatedAt"])
             };
         }
     }

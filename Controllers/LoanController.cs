@@ -13,9 +13,9 @@ namespace LoanApp.Controllers
         {
             _loanRepository = loanRepository;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<LoanApplication> list = _loanRepository.GetAll();
+            IEnumerable<LoanApplication> list = await _loanRepository.GetAll();
             return View(list);
         }
 
@@ -29,18 +29,18 @@ namespace LoanApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(LoanApplication model)
+        public async Task<IActionResult> Create(LoanApplication model)
         {
             if (!ModelState.IsValid) return View(model);
-            _loanRepository.Create(model);
+            await _loanRepository.Create(model);
             return RedirectToAction("Index");
         }
 
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var m = _loanRepository.GetById(id);
+            var m = await _loanRepository.GetById(id);
             if (m == null) return NotFound();
             return View(m);
         }
@@ -48,23 +48,23 @@ namespace LoanApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, string status)
+        public async Task<IActionResult> Edit(int id, string status)
         {
-            var m = _loanRepository.GetById(id);
+            var m = await _loanRepository.GetById(id);
             if (m == null) return NotFound();
             if (string.IsNullOrWhiteSpace(status))
             {
                 ModelState.AddModelError("Status", "Status is required");
                 return View(m);
             }
-            _loanRepository.UpdateStatus(id, status);
+            await _loanRepository.UpdateStatus(id, status);
             return RedirectToAction("Index");
         }
 
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var m = _loanRepository.GetById(id);
+            var m = await _loanRepository.GetById(id);
             if (m == null) return NotFound();
             return View(m);
         }

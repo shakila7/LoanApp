@@ -4,9 +4,9 @@ namespace LoanApp.Data
 {
     public interface ILoanRepository
     {
-        IEnumerable<LoanApplication> GetAll();
-        LoanApplication GetById(int id);
-        int Create(LoanApplication model);
-        void UpdateStatus(int id, string status);
+        Task<IEnumerable<LoanApplication>> GetAll();
+        Task<LoanApplication> GetById(int id);
+        Task<int> Create(LoanApplication model);
+        Task UpdateStatus(int id, string status);
     }
 }
