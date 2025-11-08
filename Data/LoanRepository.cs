@@ -80,7 +80,6 @@ namespace LoanApp.Data
                 LoanAmount = Convert.ToDecimal(rdr["LoanAmount"]),
                 DurationMonths = Convert.ToInt32(rdr["DurationMonths"]),
                 Status = Convert.ToString(rdr["Status"]),
-                IsDeleted = Convert.ToBoolean(rdr["IsDeleted"]),
                 CreatedAt = Convert.ToDateTime(rdr["CreatedAt"]),
                 UpdatedAt = Convert.ToDateTime(rdr["UpdatedAt"])
             };
