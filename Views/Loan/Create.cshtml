@@ -1,8 +1,16 @@
-﻿@model LoanApp.Models.LoanApplication
-
-
+﻿@using LoanApp.Models.Constants
+@model LoanApp.Models.LoanApplication
+@{
+    ViewBag.Title = "Create";
+    var loanTypes = ViewBag.LoanTypes;
+    var newStatus = Status.New;
+    var approvedStatus = Status.Approved;
+    var rejectedStatus = Status.Rejected;
+}
+<h2>Create Loan Application</h2>
 <form asp-action="Create" method="post">
     <div class="row">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="col-md-6">
             <div class="mb-3">
                 <label asp-for="CustomerName" class="form-label"></label>
@@ -25,27 +33,29 @@
             <div class="mb-3">
                 <label asp-for="Status" class="form-label"></label>
                 <select asp-for="Status" class="form-select">
-                    <option value="New">New</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Rejected">Rejected</option>
+                    <option value="@newStatus">New</option>
+                    <option value="@approvedStatus">Approved</option>
+                    <option value="@rejectedStatus">Rejected</option>
                 </select>
             </div>
         </div>
 
         <div class="col-md-6">
             <div class="mb-3">
-                <label asp-for="LoanType" class="form-label"></label>
-                <select asp-for="LoanType" class="form-select" id="loanTypeSelect">
-                    <option value="Personal">Personal</option>
-                    <option value="Housing">Housing</option>
-                    <option value="Vehicle">Vehicle</option>
+                <label asp-for="LoanTypeId" class="form-label"></label>
+                <select id="LoanTypeId" class="form-control" asp-for="LoanTypeId">
+                    <option value="">-- Select Loan Type --</option>
+                    @foreach (var loan in loanTypes)
+                    {
+                        <option value="@loan.Id" data-rate="@loan.InterestRate">@loan.Name</option>
+                    }
                 </select>
-                <span asp-validation-for="LoanType" class="text-danger"></span>
+                <span asp-validation-for="LoanTypeId" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="InterestRate" class="form-label"></label>
-                <input asp-for="InterestRate" class="form-control" id="interestRateInput" readonly/>
+                <input asp-for="InterestRate" class="form-control" id="InterestRate" readonly />
                 <span asp-validation-for="InterestRate" class="text-danger"></span>
             </div>
 
@@ -58,27 +68,21 @@
     </div>
     
     <button type="submit" class="btn btn-primary">Save</button>
-    <button class="btn btn-secondary" asp-controller="Loan" asp-action="Index">Cancel</button>
+    <a class="btn btn-secondary" asp-controller="Loan" asp-action="Index">Cancel</a>
 
 </form>
 
 
 @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
-        function applyInterestFor(type) {
-            if (type === 'Personal') return 12.5;
-            if (type === 'Housing') return 8.0;
-            if (type === 'Vehicle') return 9.0;
-            return 0;
-        }
 
-
-        $(function () {
-            var sel = $('#loanTypeSelect');
-            var rate = $('#interestRateInput');
-            function setRate() { rate.val(applyInterestFor(sel.val())); }
-            setRate();
-            sel.change(setRate);
+        $("#LoanTypeId").on("change", function () {
+            var selectedOption = $(this).find("option:selected");
+            var rate = selectedOption.data("rate");
+            $("#InterestRate").val(rate);
         });
     </script>
 }

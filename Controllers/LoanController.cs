@@ -2,27 +2,29 @@
 using LoanApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 
 namespace LoanApp.Controllers
 {
     [Authorize]
     public class LoanController : Controller
     {
-        private readonly ILoanRepository _loanRepository;
-        public LoanController(ILoanRepository loanRepository)
+        private readonly ILoanApplicationRepository _loanRepository;
+        public LoanController(ILoanApplicationRepository loanRepository)
         {
             _loanRepository = loanRepository;
         }
         public async Task<IActionResult> Index()
         {
-            IEnumerable<LoanApplication> list = await _loanRepository.GetAll();
+            IEnumerable<LoanApplicationViewModel> list = await _loanRepository.GetAll();
             return View(list);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var model = new LoanApplication { Status = "New", InterestRate = 12.5m };
+            var model = new LoanApplication();
+            await PopulateDropDowns();
             return View(model);
         }
 
@@ -31,7 +33,13 @@ namespace LoanApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(LoanApplication model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropDowns();
+                return View(model);
+            }
+            model.CreatedBy = User.Identity?.Name ?? "System";
+            model.UpdatedBy = User.Identity?.Name ?? "System";
             await _loanRepository.Create(model);
             return RedirectToAction("Index");
         }
@@ -57,7 +65,9 @@ namespace LoanApp.Controllers
                 ModelState.AddModelError("Status", "Status is required");
                 return View(m);
             }
-            await _loanRepository.UpdateStatus(id, status);
+            var user = User.Identity?.Name ?? "System";
+
+            await _loanRepository.UpdateStatus(id, status, user);
             return RedirectToAction("Index");
         }
 
@@ -67,6 +77,16 @@ namespace LoanApp.Controllers
             var m = await _loanRepository.GetById(id);
             if (m == null) return NotFound();
             return View(m);
+        }
+        private async Task PopulateDropDowns()
+        {
+            var loanTypes = await _loanRepository.GetAllLoanTypes();
+            ViewBag.LoanTypes = loanTypes.Select(x => new
+            {
+                x.Id,
+                x.Name,
+                x.InterestRate
+            }).ToList();
         }
     }
 }

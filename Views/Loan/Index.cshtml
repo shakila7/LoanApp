@@ -1,11 +1,10 @@
-﻿@model IEnumerable<LoanApp.Models.LoanApplication>
+﻿@model IEnumerable<LoanApp.Models.LoanApplicationViewModel>
 @{
     ViewData["Title"] = "Dashboard";
 }
 
 
 <h2>Loan Applications</h2>
-
 
 <p><a class="btn btn-success" href="/Loan/Create">Add Loan Application</a></p>
 
@@ -17,10 +16,10 @@
             <th>Customer Name</th>
             <th>NIC/Passport</th>
             <th>Type</th>
-            <th>Interest</th>
-            <th>Amount</th>
-            <th>Duration (m)</th>
-            <th>Status</th>
+            <th class="text-end">Interest</th>
+            <th class="text-end">Amount</th>
+            <th class="text-end">Duration (m)</th>
+            <th class="text-center">Status</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -35,10 +34,16 @@
                 <td>@item.CustomerName</td>
                 <td>@item.NicPassport</td>
                 <td>@item.LoanType</td>
-                <td>@item.InterestRate %</td>
-                <td>@String.Format("{0:N2}", item.LoanAmount)</td>
-                <td>@item.DurationMonths</td>
-                <td>@item.Status</td>
+                <td class="text-end">@item.InterestRate %</td>
+                <td class="text-end">@String.Format("{0:N2}", item.LoanAmount)</td>
+                <td class="text-end">@item.DurationMonths</td>
+                <td class="text-center">
+                    <span class="badge rounded-pill @(item.Status == "New" ? "bg-info" :
+                                                    item.Status == "Approved" ? "bg-success" :
+                                                    item.Status == "Rejected" ? "bg-danger" : "bg-secondary")">
+                        @item.Status
+                    </span>
+                </td>
                 <td>
                     <a class="btn btn-sm btn-primary" asp-controller="Loan" asp-action="Details" asp-route-id="@item.Id" >View</a>
                     <a class="btn btn-sm btn-warning" asp-controller="Loan" asp-action="Edit" asp-route-id="@item.Id">Edit</a>

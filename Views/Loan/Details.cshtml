@@ -1,25 +1,58 @@
-﻿@model LoanApp.Models.LoanApplication
+﻿@model LoanApp.Models.LoanApplicationViewModel
 @{
     ViewData["Title"] = "Loan Application Details";
 }
 
-
 <h2>Loan Application Details</h2>
 
-
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">@Model.CustomerName</h5>
-        <p class="card-text">
-            <strong>NIC/Passport:</strong> @Model.NicPassport<br />
-            <strong>Loan Type:</strong> @Model.LoanType<br />
-            <strong>Interest Rate:</strong> @Model.InterestRate %<br />
-            <strong>Loan Amount:</strong> @String.Format("{0:N2}", Model.LoanAmount)<br />
-            <strong>Duration (months):</strong> @Model.DurationMonths<br />
-            <strong>Status:</strong> @Model.Status<br />
-            <strong>Applied At:</strong> @Model.CreatedAt
-        </p>
+<div class="row">
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.CustomerName)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.CustomerName)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.NicPassport)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.NicPassport)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.LoanType)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.LoanType)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.InterestRate)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.InterestRate)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.LoanAmount)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.LoanAmount)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.DurationMonths)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.DurationMonths)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+    </dl>
+    <div class="col-md-3">
         <a class="btn btn-warning" asp-controller="Loan" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
         <a class="btn btn-secondary" asp-controller="Loan" asp-action="Index">Back</a>
     </div>
+    
 </div>

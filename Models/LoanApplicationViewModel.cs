@@ -2,7 +2,7 @@
 
 namespace LoanApp.Models
 {
-    public class LoanApplication : Base
+    public class LoanApplicationViewModel
     {
         public int Id { get; set; }
 
@@ -21,7 +21,7 @@ namespace LoanApp.Models
 
         [Required]
         [Display(Name = "Loan Type")]
-        public int LoanTypeId { get; set; }
+        public string LoanType { get; set; }
 
         [Range(0.0, 100.0)]
         [Display(Name = "Interest Rate")]
@@ -42,6 +42,5 @@ namespace LoanApp.Models
         [Required]
         [Display(Name = "Status")]
         public string Status { get; set; }
-        
     }
 }
